@@ -22,7 +22,7 @@ Bodymedia API Clojure Wrapper
 
 ;;List the user's burn
 (get-burn-days access_token "20110722" "20110801")
-
+```
 
 ## License
 
