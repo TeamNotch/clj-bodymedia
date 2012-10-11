@@ -4,8 +4,7 @@
                  [org.clojure/tools.logging "0.2.3"]
                  [org.clojure/tools.trace "0.7.1"]
                  [org.clojure/data.json "0.1.2"]
-                 [clj-webdriver "0.5.0-alpha5"]
-                 [clj-http "0.4.2"]
+                 [clj-http "0.5.3"]
                  ]
   :source-path "src/main/clojure"
   :test-path "src/test/clojure"

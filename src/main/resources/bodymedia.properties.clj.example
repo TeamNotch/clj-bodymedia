@@ -1,0 +1,3 @@
+{:client_id "client id goes here"
+:client_secret "client secret goes here"
+:test_access_token "a test access token goes here"}
