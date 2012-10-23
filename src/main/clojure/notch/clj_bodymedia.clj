@@ -30,7 +30,11 @@
 (defn get-request-token
   "Get request token for oauth1 start"
   ([callback_url]
-    (oauth/request-token *consumer* callback_url)))
+    (let [result (oauth/request-token *consumer* callback_url)]
+      (when (and (contains? result :oauth_token )
+              (contains? result :oauth_token_secret ))
+        result
+        ))))
 
 (defn get-auth-uri
   "Send the user to this URL for first part of OAuth"
@@ -42,9 +46,18 @@
     )))
 
 (defn get-access-token
-  "Get the final access token for OAuth"
+  "Get the final access token for OAuth.
+  Returns the token as a map if successful
+  Returns nil otherwise"
   [request_token]
-  (oauth/access-token *consumer* request_token))
+  (let [result (oauth/access-token *consumer* request_token)]
+    (when (and (contains? result :oauth_token)
+            (contains? result :oauth_token_secret)
+            (contains? result :xoauth_token_expiration_time))
+      result
+      )
+    )
+  )
 
 (defn access-token-expired?
   "Is the token expiration past the current time?"
@@ -68,7 +81,7 @@
                               uri
                               params)
                         params)]
-    (info "GET: " uri " " query_params)
+    (debug "GET: " uri " " query_params)
     (-> (http/get uri {:query-params query_params})
     :body
     json/read-json)))

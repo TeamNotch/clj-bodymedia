@@ -15,13 +15,18 @@
 (def access_token_year_3000 {:xoauth_token_expiration_time "32503708800"} )
 
 
+
 ;(try
-;  (def request_token (oauth/request-token consumer "http://localhost"))
+;  (def request_token (get-request-token "http://localhost"))
 ;  (catch Exception e (error e)))
 ;
+;(get-auth-uri request_token "http://localhost")
+;
 ;(try
-;  (def access_token (oauth/access-token consumer request_token))
+;  (def access_token (get-access-token request_token))
 ;  (catch Exception e (error e)))
+;
+;(get-user-info access_token )
 
 (deftest test-basics
 
