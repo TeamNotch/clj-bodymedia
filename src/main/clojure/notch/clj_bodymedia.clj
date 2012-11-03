@@ -51,10 +51,16 @@
   Returns nil otherwise"
   [request_token]
   (let [result (oauth/access-token *consumer* request_token)]
-    (when (and (contains? result :oauth_token)
+    (cond
+      (and (contains? result :oauth_token)
             (contains? result :oauth_token_secret)
             (contains? result :xoauth_token_expiration_time))
       result
+
+      ;;correcting for a bug in the BM get-access-token API.. maybe?
+      (= {(keyword "") ""} result)
+      ;;Throw a similar 401 that oauth.client would have thrown
+      (throw (clojure.lang.ExceptionInfo. "BodyMedia, Expired Access Token?" {:object {:status 401}} ) )
       )
     )
   )
@@ -83,8 +89,8 @@
                         params)]
     (debug "GET: " uri " " query_params)
     (-> (http/get uri {:query-params query_params})
-    :body
-    json/read-json)))
+        :body
+        json/read-json)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;API Calls
@@ -122,6 +128,14 @@
   (-> (http-get access_token (str "/burn/day/intensity/" start_date "/" stop_date ) {})
     :days))
 
+(defn get-burn-minutes
+  "Lists the user's caloric burn, per day, for the date range"
+  [access_token date]
+  (-> (http-get access_token (str "/burn/day/minute/intensity/" date ) {})
+    :days
+    (first)
+    :minutes))
+
 (defn get-sleep-days
   "Lists the user's sleep, per day, for the date range"
   [access_token start_date stop_date]
@@ -132,6 +146,12 @@
   "Lists the user's steps, per day, for the date range"
   [access_token start_date stop_date]
   (-> (http-get access_token (str "/step/day/" start_date "/" stop_date ) {})
+    :days))
+
+(defn get-step-hours
+  "Lists the user's steps, per hour, for the date range"
+  [access_token start_date stop_date]
+  (-> (http-get access_token (str "/step/day/hour/" start_date "/" stop_date ) {})
     :days))
 
 (defn get-summaries
